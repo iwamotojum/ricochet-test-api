@@ -39,25 +39,13 @@ class AuthController extends BaseController
 
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
-        return response()->json([
-            'success' => true,
-            'message' => 'Logged out successfully',
-          ], 200);
+        $response = $this->userService->destroySession($request);
+        return $this->sendResponse($response, 'Logged out successfully');
     }
 
     public function me(Request $request)
     {
-        $user = $request->user();
-        $token = $user->currentAccessToken();
-
-        return response()->json([
-            'user' => $user->only(['id', 'name', 'email']),
-            'token_details' => [
-                'token_name' => $token->name,
-                'created_at' => $token->created_at,
-                'last_used_at' => $token->last_used_at
-            ]
-        ]);
+        $response = $this->userService->getUserDetails($request);
+        return $this->sendResponse($response, 'OK.');
     }
 }
