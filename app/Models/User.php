@@ -27,4 +27,14 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function callsMade()
+    {
+        return $this->hasMany(Call::class, 'from_user_id');
+    }
+
+    public function callsReceived()
+    {
+        return $this->hasMany(Call::class, 'to_user_id');
+    }
 }
