@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
-use App\Http\Requests\RegisterRequest;
-use App\Http\Requests\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\ForgotRequest;
+use App\Http\Requests\Auth\ResetRequest;
 use App\Services\UserService;
 use App\Http\Controllers\API\BaseController;
 
@@ -47,5 +49,17 @@ class AuthController extends BaseController
     {
         $response = $this->userService->getUserDetails($request);
         return $this->sendResponse($response, 'OK.');
+    }
+
+    public function forgotPassword(ForgotRequest $request)
+    {
+        $response = $this->userService->forgotPassword($request->only('email'))
+        return $this->sendResponse([], $response)
+    }
+
+    public function resetPassword(ResetRequest $request)
+    {
+        $response = $this->userService->resetPassword($request->only(['email', 'password', 'password_confirmation', 'token']))
+        return $this->sendResponse([], $response)
     }
 }
