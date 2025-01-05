@@ -3,20 +3,17 @@
 namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+
+use App\Http\Controllers\API\BaseController;
+
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\ForgotRequest;
 use App\Http\Requests\Auth\ResetRequest;
+
 use App\Services\UserService;
-use App\Http\Controllers\API\BaseController;
 
-
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
-use Illuminate\Validation\ValidationException;
-
-use Illuminate\Support\Facades\Log;
 
 class AuthController extends BaseController
 {

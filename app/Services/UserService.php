@@ -18,6 +18,11 @@ class UserService
         $this->userRepository = $userRepository;
     }
 
+    public function getAll(array $params)
+    {
+        return $this->userRepository->getAll();
+    }
+
     public function createUser(array $params)
     {
         $params['password'] = bcrypt($params['password']);
