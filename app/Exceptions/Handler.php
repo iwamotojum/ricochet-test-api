@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -26,5 +27,34 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function render($request, $exception)
+    {
+        if ($request->is('api/*') || $request->wantsJson()) {
+            $code = 500;
+
+            if ($exception instanceof ValidationException) {
+                $code = 422;
+            } elseif ($exception instanceof AuthenticationException) {
+                $code = 401;
+            } elseif ($exception instanceof ModelNotFoundException) {
+                $code = 404;
+            }
+           
+            Log::error('Exception occurred: ' . $exception->getMessage(), ['exception' => $exception]);
+
+            $json = [
+                'success' => false,
+                'error' => [
+                    'code' => $exception->getCode() ?: $code,
+                    'message' => $exception->getMessage(),
+                ],
+            ];
+
+            return response()->json($json, $code);
+        }
+
+        return parent::render($request, $exception);
     }
 }
