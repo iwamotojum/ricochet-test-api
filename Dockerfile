@@ -24,19 +24,14 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy composer files first
-COPY composer.json composer.lock ./
-
 # Set composer to run as root
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
-# Install composer dependencies
-RUN composer install --no-interaction --no-dev --prefer-dist \
-    && composer require spatie/laravel-query-builder \
-    && composer require twilio/sdk
-
-# Copy the rest of the application
+# Copy existing application directory
 COPY . .
+
+# Install dependencies
+RUN composer install --no-interaction --no-dev --prefer-dist --optimize-autoloader
 
 # Copy Nginx configuration
 COPY nginx.conf /etc/nginx/nginx.conf
