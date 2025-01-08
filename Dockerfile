@@ -1,3 +1,4 @@
+# Dockerfile
 FROM php:8.2-fpm
 
 # Install system dependencies
@@ -23,11 +24,19 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy existing application directory
-COPY . .
+# Copy composer files first
+COPY composer.json composer.lock ./
 
-# Install project dependencies
-RUN composer install --no-interaction --no-dev --prefer-dist
+# Set composer to run as root
+ENV COMPOSER_ALLOW_SUPERUSER=1
+
+# Install composer dependencies
+RUN composer install --no-interaction --no-dev --prefer-dist \
+    && composer require spatie/laravel-query-builder \
+    && composer require twilio/sdk
+
+# Copy the rest of the application
+COPY . .
 
 # Copy Nginx configuration
 COPY nginx.conf /etc/nginx/nginx.conf
