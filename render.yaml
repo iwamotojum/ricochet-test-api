@@ -1,0 +1,40 @@
+# render.yaml
+services:
+  - type: web
+    name: laravel-app
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    envVars:
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_NAME
+        value: RicochetTest
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        fromDatabase:
+          name: laravel-db
+          property: host
+      - key: DB_DATABASE
+        fromDatabase:
+          name: laravel-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: laravel-db
+          property: username
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: laravel-db
+          property: password
+    healthCheckPath: /
+    buildCommand: null
+
+databases:
+  - name: laravel-db
+    plan: starter
