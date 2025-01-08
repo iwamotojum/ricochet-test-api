@@ -14,7 +14,7 @@ class ResetRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'token' => 'required'
+            'token' => 'required',
             'email' => 'required|email',
             'password' => 'required|string|min:6|regex:/[A-Z]/|regex:/[0-9]/|regex:/[@$!%*?&]/',
         ];
@@ -23,7 +23,7 @@ class ResetRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'token.required' => 'O token é obrigatório. Verifique a caixa de correio do seu e-mail.'
+            'token.required' => 'O token é obrigatório. Verifique a caixa de correio do seu e-mail.',
             'email.required' => 'O campo de e-mail é obrigatório.',
             'email.email' => 'Informe um e-mail válido.',
             'password.required' => 'O campo de senha é obrigatório.',

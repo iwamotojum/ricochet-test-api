@@ -20,7 +20,7 @@ class UserController extends BaseController
 
     public function index(Request $request)
     {
-        $response = $this->userService->getAll($request->all());
+        $response = $this->userService->getAll();
         return $this->sendPaginatedResponse(UserResource::collection($response), $response, 'All calls returned successfully.');
     }
 }

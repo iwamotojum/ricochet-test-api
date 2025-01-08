@@ -5,6 +5,8 @@ namespace App\Repositories;
 use App\Models\User;
 use App\Repositories\Contracts\UserRepositoryInterface;
 
+use Twilio\Rest\Client;
+
 class UserRepository implements UserRepositoryInterface
 {
     protected $model;
@@ -16,7 +18,12 @@ class UserRepository implements UserRepositoryInterface
 
     public function getAll()
     {
-        return $this->model->all();
+        return $this->model->paginate();
+    }
+
+    public function getUserByPhone(string $phone)
+    {
+        return $this->model->where('phone', $phone)->first();
     }
 
     public function find($id)

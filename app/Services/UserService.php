@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
+
 
 use App\Repositories\Contracts\UserRepositoryInterface;
 
@@ -18,7 +22,7 @@ class UserService
         $this->userRepository = $userRepository;
     }
 
-    public function getAll(array $params)
+    public function getAll()
     {
         return $this->userRepository->getAll();
     }
@@ -32,7 +36,7 @@ class UserService
         return [
             'access_token' => $token,
             'token_type' => 'Bearer',
-            'user' => $user->only(['name', 'email'])
+            'user' => $user->only(['name', 'email', 'phone'])
         ];
     }
 
@@ -43,7 +47,7 @@ class UserService
                 'email' => ['Unauthorized.'],
             ]);
         }
-      
+
         $user = Auth::user();
         $user->tokens()->delete();
         $token = $user->createToken('auth_token', ['*'], now()->addDays(2));
@@ -51,7 +55,7 @@ class UserService
         return [
             'access_token' => $token->plainTextToken,
             'token_type' => 'Bearer',
-            'user' => $user->only(['name', 'email'])
+            'user' => $user->only(['name', 'email', 'phone'])
         ];
     }
 
@@ -77,35 +81,34 @@ class UserService
 
     public function forgotPassword(array $params)
     {
-        $status = Password::sendResetLink($request->only('email'))
+        $status = Password::sendResetLink($params);
         if ($status !== Password::RESET_LINK_SENT) {
             throw new HttpResponseException(response()->json([
-                'message' => 'Unable to send reset link'
+                'success' => false,
+                'message' => trans($status)
             ], 400));
         }
 
-        return 'Reset password link sent to your email'
+        return 'Reset password link sent to your email';
     }
 
-    public function resetPassowrd(array $params)
+    public function resetPassword(array $params)
     {
-        $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user, $password) {
-                $user->forceFill([
-                    'password' => Hash::make($password)
-                ])->setRememberToken(Str::random(60));
+        $status = Password::reset($params, function ($user, $password) {
+            $user->forceFill([
+                'password' => Hash::make($password)
+            ])->setRememberToken(Str::random(60));
 
-                $user->save();
-            }
-        );
+            $user->save();
+        });
 
         if ($status !== Password::PASSWORD_RESET) {
             throw new HttpResponseException(response()->json([
+                'success' => false,
                 'message' => 'Unable to reset password'
             ], 400));
         }
 
-        return 'Password reset successfully'
+        return 'Password reset successfully';
     }
 }

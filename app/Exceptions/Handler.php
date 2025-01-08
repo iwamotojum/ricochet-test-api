@@ -29,19 +29,24 @@ class Handler extends ExceptionHandler
         });
     }
 
-    public function render($request, $exception)
+    public function render($request, Throwable $exception)
     {
         if ($request->is('api/*') || $request->wantsJson()) {
             $code = 500;
 
             if ($exception instanceof ValidationException) {
                 $code = 422;
+
+                return response()->json([
+                    'success' => false,
+                    'errors' => $exception->errors(),
+                ], $code);
             } elseif ($exception instanceof AuthenticationException) {
                 $code = 401;
             } elseif ($exception instanceof ModelNotFoundException) {
                 $code = 404;
             }
-           
+
             Log::error('Exception occurred: ' . $exception->getMessage(), ['exception' => $exception]);
 
             $json = [

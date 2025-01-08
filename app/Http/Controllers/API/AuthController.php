@@ -26,7 +26,7 @@ class AuthController extends BaseController
 
     public function register(RegisterRequest $request)
     {
-        $response = $this->userService->createUser($request->only(['name', 'email', 'password']));
+        $response = $this->userService->createUser($request->only(['name', 'email', 'password', 'phone']));
         return $this->sendResponse($response, 'User register successfully.');
     }
 
@@ -50,13 +50,21 @@ class AuthController extends BaseController
 
     public function forgotPassword(ForgotRequest $request)
     {
-        $response = $this->userService->forgotPassword($request->only('email'))
-        return $this->sendResponse([], $response)
+        $response = $this->userService->forgotPassword($request->only('email'));
+        return $this->sendResponse([], $response);
     }
 
     public function resetPassword(ResetRequest $request)
     {
-        $response = $this->userService->resetPassword($request->only(['email', 'password', 'password_confirmation', 'token']))
-        return $this->sendResponse([], $response)
+        $response = $this->userService->resetPassword($request->only(['email', 'password', 'password_confirmation', 'token']));
+        return $this->sendResponse([], $response);
+    }
+
+    public function showResetPasswordForm(Request $request)
+    {
+        $token = $request->query('token');
+        $email = $request->query('email');
+
+        return view('auth.passwords.reset', compact('token', 'email'));
     }
 }

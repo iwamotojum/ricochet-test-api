@@ -39,6 +39,29 @@ services:
     networks:
       - laravel-net
 
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    restart: unless-stopped
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - laravel-net
+  
+  ngrok:
+    image: wernight/ngrok
+    container_name: ngrok
+    environment:
+      - NGROK_AUTHTOKEN=${NGROK_AUTH_TOKEN}
+    ports:
+      - "4040:4040"
+    depends_on:
+      - app
+    command: ngrok http nginx:80 # O ngrok agora está se conectando ao nginx
+    networks:
+      - laravel-net
+
 networks:
   laravel-net:
     driver: bridge

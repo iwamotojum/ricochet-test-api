@@ -6,6 +6,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 use App\Http\Resources\User as UserResource;
 
+use Carbon\Carbon;
+
 class Call extends JsonResource
 {
     public function toArray($request)
@@ -17,8 +19,8 @@ class Call extends JsonResource
             'duration' => $this->duration,
             'from_user' => new UserResource($this->fromUser),
             'to_user' => new UserResource($this->toUser),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' => Carbon::parse($this->created_at)->format('H:i:s d/m/Y'),
+            'updated_at' => Carbon::parse($this->updated_at)->format('H:i:s d/m/Y'),
         ];
     }
 }
